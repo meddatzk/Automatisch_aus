@@ -1,8 +1,7 @@
 blueprint:
   name: "Automatisch aus"
-  description: "Schaltet Geräte automatisch aus, wenn der Stromverbrauch unter einem definierten Wert für eine definierte Zeitspanne fällt."
+  description: "Schaltet Geräte automatisch aus, wenn der Stromverbrauch unter einem definierten Wert für eine definierte Zeitspanne fällt. Version: 1.0.0"
   domain: automation
-  version: "1.0.0"
   input:
     power_sensor:
       name: Energy Power Sensor

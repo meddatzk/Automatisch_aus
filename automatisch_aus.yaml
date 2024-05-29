@@ -1,0 +1,55 @@
+blueprint:
+  name: "Automatisch aus"
+  description: "Schaltet Geräte automatisch aus, wenn der Stromverbrauch unter einem definierten Wert für eine definierte Zeitspanne fällt."
+  domain: automation
+  version: "1.0.0"
+  input:
+    power_sensor:
+      name: Energy Power Sensor
+      description: "Der Sensor, der den Energieverbrauch misst."
+      selector:
+        entity:
+          domain: sensor
+    switches:
+      name: Schalter
+      description: "Liste der Schalter, die ausgeschaltet werden sollen."
+      selector:
+        target:
+          entity:
+            domain: switch
+    power_threshold:
+      name: Leistungsschwelle (Watt)
+      description: "Der Schwellenwert für die Leistung (in Watt), unter dem die Geräte ausgeschaltet werden sollen."
+      default: 15
+      selector:
+        number:
+          min: 1
+          max: 1000
+          unit_of_measurement: W
+    duration:
+      name: Dauer (Minuten)
+      description: "Die Dauer (in Minuten), für die der Verbrauch unter der Schwelle sein muss, bevor die Geräte ausgeschaltet werden."
+      default: 5
+      selector:
+        number:
+          min: 1
+          max: 60
+          unit_of_measurement: minutes
+
+trigger:
+  - platform: numeric_state
+    entity_id: !input power_sensor
+    below: !input power_threshold
+    for:
+      minutes: !input duration
+
+condition:
+  - condition: state
+    entity_id: !input switches
+    state: 'on'
+
+action:
+  - service: switch.turn_off
+    target: !input switches
+
+mode: single

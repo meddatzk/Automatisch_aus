@@ -1,6 +1,6 @@
 blueprint:
   name: "Automatisch aus"
-  description: "Schaltet Geräte automatisch aus, wenn der Stromverbrauch unter einem definierten Wert für eine definierte Zeitspanne fällt. Version: 1.0.0"
+  description: "Schaltet Geräte automatisch aus, wenn der Stromverbrauch unter einem definierten Wert für eine definierte Zeitspanne fällt. Version: 1.0.3"
   domain: automation
   input:
     power_sensor:
@@ -9,13 +9,15 @@ blueprint:
       selector:
         entity:
           domain: sensor
-    switches:
-      name: Schalter
-      description: "Liste der Schalter, die ausgeschaltet werden sollen."
+    switches_and_lights:
+      name: Schalter und Lichter
+      description: "Liste der Schalter und Lichter, die ausgeschaltet werden sollen."
       selector:
         target:
           entity:
-            domain: switch
+            domain: 
+              - switch
+              - light
     power_threshold:
       name: Leistungsschwelle (Watt)
       description: "Der Schwellenwert für die Leistung (in Watt), unter dem die Geräte ausgeschaltet werden sollen."
@@ -23,7 +25,7 @@ blueprint:
       selector:
         number:
           min: 1
-          max: 1000
+          max: 100
           unit_of_measurement: W
     duration:
       name: Dauer (Minuten)
@@ -42,13 +44,8 @@ trigger:
     for:
       minutes: !input duration
 
-condition:
-  - condition: state
-    entity_id: !input switches
-    state: 'on'
-
 action:
-  - service: switch.turn_off
-    target: !input switches
+  - service: homeassistant.turn_off
+    target: !input switches_and_lights
 
 mode: single
